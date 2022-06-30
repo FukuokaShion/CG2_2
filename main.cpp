@@ -101,7 +101,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 #endif // _DEBUG
 
-
 	HRESULT result;
 	ID3D12Device* device = nullptr;
 	IDXGIFactory7* dxgiFactory = nullptr;
@@ -281,8 +280,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//射影変換行列(透視投影)
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), (float)window_width / window_height, 0.1f, 1000.0f);
 
+	//ビュー変換行列
+	float angle = 0.0f;
+	XMMATRIX matView;
+	XMFLOAT3 eye(0, 0, -100);//視点座標
+	XMFLOAT3 target(0, 0, 0);//注視点座標
+	XMFLOAT3 up(0, 1, 0);//上方向ベクトル
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
 	//定数バッファに転送
-	constMapTransform->mat = matProjection;
+	constMapTransform->mat = matView * matProjection;
 
 #pragma endregion DirectX初期化処理
 	//DirectX初期化処理　ここまで
@@ -299,10 +306,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 頂点データ
 	Vertex vertices[] = {
 		// x      y     z       u     v
-		{{-50.0f, -50.0f, 50.0f}, {0.0f, 1.0f}}, // 左下
-		{{-50.0f, 50.0f, 50.0f}, {0.0f, 0.0f}}, // 左上
-		{{50.0f, -50.0f, 50.0f}, {1.0f, 1.0f}}, // 右下
-		{{50.0f, 50.0f, 50.0f}, {1.0f, 0.0f}}, // 右上
+		{{-50.0f, -50.0f, 0.0f}, {0.0f, 1.0f}}, // 左下
+		{{-50.0f, 50.0f, 0.0f}, {0.0f, 0.0f}}, // 左上
+		{{50.0f, -50.0f, 0.0f}, {1.0f, 1.0f}}, // 右下
+		{{50.0f, 50.0f, 0.0f}, {1.0f, 0.0f}}, // 右上
 	};
 
 	// インデックスデータ
@@ -808,84 +815,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 更新処理
 #pragma region キーボード情報の取得
 
-		transformX = 0.0f;
-		transformY = 0.0f;
-		rotation = 0.0f;
-		scale = 1.0f;
-
-
-		//平行移動
-		if (keys[DIK_W]) {
-			transformY += 0.05f;
-		}
-
-		if (keys[DIK_S]) {
-			transformY -= 0.05f;
-		}
-
-		if (keys[DIK_A]) {
-			transformX -= 0.05f;
-		}
-
-		if (keys[DIK_D]) {
-			transformX += 0.05f;
-		}
-		// 拡大縮小
-		if (keys[DIK_Z]) {
-			scale -= 0.1f;
-		}
-
-		if (keys[DIK_C]) {
-			scale += 0.1f;
-		}
-
-		// 回転
-		if (keys[DIK_Q]) {
-			rotation -= PI / 32;
-		}
-
-		if (keys[DIK_E]) {
-			rotation += PI / 32;
-		}
-
-		//アフィン行列の生成
-		affin[0][0] = scale * cos(rotation);
-		affin[0][1] = scale * (-sin(rotation));
-		affin[0][2] = transformX;
-
-		affin[1][0] = scale * sin(rotation);
-		affin[1][1] = scale * cos(rotation);
-		affin[1][2] = transformY;
-
-		affin[2][0] = 0.0f;
-		affin[2][1] = 0.0f;
-		affin[2][2] = 1.0f;
-
-
-		//// アフィン変換
-		//for (int i = 0; i < _countof(vertices); i++) {
-		//	vertices[i].x = vertices[i].x * affin[0][0] +
-		//		vertices[i].y * affin[0][1] + 1.0f * affin[0][2];
-		//	vertices[i].y = vertices[i].x * affin[1][0] +
-		//		vertices[i].y * affin[1][1] + 1.0f * affin[1][2];
-		//	vertices[i].z = vertices[i].x * affin[2][0] +
-		//		vertices[i].y * affin[2][1] + 1.0f * affin[2][2];
-		//}
-
-
-
-		//全頂点に対して
-		for (int i = 0; i < _countof(vertices); i++) {
-			vertMap[i] = vertices[i];	//座標をコピー
-		}
-
 #pragma endregion 更新処理
 
+		if (keys[DIK_D] || keys[DIK_A]) {
+			if (keys[DIK_D]) {
+				angle += XMConvertToRadians(1.0f);
+			}else if (keys[DIK_A]) {
+				angle -= XMConvertToRadians(1.0f);
+			}
 
-		//if (keys[DIK_SPACE]) {
-		//	FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // 青っぽい色
-		//	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		//}
+			//angleラジアンだけY軸周りに回転、半径は-100
+			eye.x = -100 * sinf(angle);
+			eye.z = -100 * cosf(angle);
+
+			//ビュー変換行列
+			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+		}
+		//定数バッファに転送
+		constMapTransform->mat = matView * matProjection;
 
 
 #pragma endregion DirectX毎フレーム処理
