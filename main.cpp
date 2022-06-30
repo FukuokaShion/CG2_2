@@ -257,6 +257,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	{
 		//ヒープ設定
 		D3D12_HEAP_PROPERTIES cbHeapProp{};
+		//GPUへの転送用
 		cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
 		//リソース設定
 		D3D12_RESOURCE_DESC cbResourceDesc{};
@@ -274,6 +275,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 		assert(SUCCEEDED(result));
 	}
+	//単位行列を代入
 	constMapTransform->mat = XMMatrixIdentity();
 
 	constMapTransform->mat.r[0].m128_f32[0] = 2.0f / 1280.0f;
@@ -565,10 +567,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParams[1].DescriptorTable.NumDescriptorRanges = 1;              		  //デスクリプタレンジ数
 	rootParams[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;               //全てのシェーダから見える
 	//定数バッファ1番
-	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParams[2].Descriptor.ShaderRegister = 1;
-	rootParams[2].Descriptor.RegisterSpace = 0;
-	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParams[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//種類
+	rootParams[2].Descriptor.ShaderRegister = 1;//定数バッファ番号
+	rootParams[2].Descriptor.RegisterSpace = 0;//デフォルト値
+	rootParams[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;//全てのシェーダーから見える
 	// テクスチャサンプラーの設定
 	D3D12_STATIC_SAMPLER_DESC samplerDesc{};
 	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;                 //横繰り返し（タイリング）
