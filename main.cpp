@@ -274,6 +274,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
 		assert(SUCCEEDED(result));
 	}
+	//スケーリング
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+	//回転角
+	XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
+	//座標
+	XMFLOAT3 position = { 0.0f,0.0f,0.0f };
+	//ワールド変換行列
+	XMMATRIX matWorld;
+	//スケーリング
+	XMMATRIX matScale;
+	matScale = XMMatrixIdentity();
+	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+	//回転
+	XMMATRIX matRota;
+	matRota= XMMatrixIdentity();
+	matRota *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+	matRota *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
+	matRota *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+	//平行移動
+	XMMATRIX matTrans;
+	matTrans = XMMatrixTranslation(-50.0f, 0.0f, 0.0f);
+
+	//ワールド行列計算
+	matWorld = XMMatrixIdentity(); //単位行列を代入
+	matWorld *= matScale;
+	matWorld *= matRota;
+	matWorld *= matTrans;
+
 	//単位行列を代入
 	constMapTransform->mat = XMMatrixIdentity();
 
@@ -289,7 +317,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
 	//定数バッファに転送
-	constMapTransform->mat = matView * matProjection;
+	constMapTransform->mat = matWorld * matView * matProjection;
 
 #pragma endregion DirectX初期化処理
 	//DirectX初期化処理　ここまで
@@ -318,10 +346,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		1, 2, 3, // 三角形2つ目
 	};
 
-	float transformX = 0.0f;
-	float transformY = 0.0f;
-	float rotation = 0.0f;
-	float scale = 1.0f;
 
 	float affin[3][3] = {
 		{0.5f,0.0f,0.0f},
@@ -816,7 +840,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region キーボード情報の取得
 
 #pragma endregion 更新処理
+		//ワールド変換
+		if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
+			if (keys[DIK_UP]) {
+				position.z += 1.0f;
+			}else if(keys[DIK_DOWN]) {
+				position.z -= 1.0f;
+			}
+			if(keys[DIK_RIGHT]) {
+				position.x += 1.0f;
+			}else if(keys[DIK_LEFT]) {
+				position.x -= 1.0f;
+			}
+		}
 
+		//スケーリング
+		matScale = XMMatrixIdentity();
+		matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+		//回転
+		matRota = XMMatrixIdentity();
+		matRota *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+		matRota *= XMMatrixRotationX(XMConvertToRadians(rotation.x));
+		matRota *= XMMatrixRotationY(XMConvertToRadians(rotation.y));
+		//平行移動
+		matTrans = XMMatrixIdentity();
+		matTrans = XMMatrixTranslation(position.x,position.y,position.z);
+		//ワールド行列計算
+		matWorld = XMMatrixIdentity(); //単位行列を代入
+		matWorld *= matScale;
+		matWorld *= matRota;
+		matWorld *= matTrans;
+
+		//ビュー変換
 		if (keys[DIK_D] || keys[DIK_A]) {
 			if (keys[DIK_D]) {
 				angle += XMConvertToRadians(1.0f);
@@ -833,7 +888,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 		//定数バッファに転送
-		constMapTransform->mat = matView * matProjection;
+		constMapTransform->mat = matWorld * matView * matProjection;
 
 
 #pragma endregion DirectX毎フレーム処理
