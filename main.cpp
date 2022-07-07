@@ -275,10 +275,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		assert(SUCCEEDED(result));
 	}
 
-
-
-
-
 	//スケーリング
 	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
 	//回転角
@@ -435,6 +431,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	device->CreateDepthStencilView(depthBuff, &dsvDesc, dsvHeap->GetCPUDescriptorHandleForHeapStart());
+
+
+	for (int i = 0; i < sizeof(vertices)/sizeof(*vertices) / 3; i++) {//三角形一つ毎に計算
+		//三角形のインデックスを取り出して一時的な変数に入れる
+		unsigned short indices0 = indices[i * 3 + 0];
+		unsigned short indices1 = indices[i * 3 + 1];
+		unsigned short indices2 = indices[i * 3 + 2];
+		//三角形を構成する頂点座標をベクトルに代入
+		XMVECTOR p0 = XMLoadFloat3(&vertices[indices0].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices[indices1].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices[indices2].pos);
+		//p0→p1ベクトル、p0→p2ベクトルを計算
+		XMVECTOR v1 = XMVectorSubtract(p1, p0);
+		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+		//外積は両方から垂直なベクトル
+		XMVECTOR normal = XMVector3Cross(v1, v2);
+		//正規化
+		normal = XMVector3Normalize(normal);
+		//求めた法線を頂点データに代入
+		XMStoreFloat3(&vertices[indices0].normal, normal);
+		XMStoreFloat3(&vertices[indices1].normal, normal);
+		XMStoreFloat3(&vertices[indices2].normal, normal);
+	}
 
 
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数
@@ -757,7 +776,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(0, 0, 0, 0.5f);
+	constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
 #pragma region 画像イメージデータの作成
