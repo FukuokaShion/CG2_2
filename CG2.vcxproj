@@ -144,8 +144,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object3d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Object3d.h" />
     <ClInclude Include="Struct.h" />
   </ItemGroup>
   <ItemGroup>
