@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ID3D12CommandQueue* commandQueue = nullptr;
 	ID3D12DescriptorHeap* rtvHeap = nullptr;
 
-	const size_t kobjectCount = 10;
+	const size_t kobjectCount = 1;
 	Object3d* object[kobjectCount];
 
 
@@ -291,58 +291,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 頂点データ
 	Vertex vertices[] = {
 		// x      y     z       u     v
-		//前
+		//
+		{{0.0f, 5.0f, 0.0f},{}, {0.5f, 0.0f}}, // 上
 		{{-5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 0.0f}}, // 左上
 		{{5.0f, -5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}}, // 右上
-		//後ろ
-		{{-5.0f, -5.0f, 5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{-5.0f, 5.0f, 5.0f},{}, {0.0f, 0.0f}}, // 左上
-		{{5.0f, -5.0f, 5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{5.0f, 5.0f, 5.0f},{}, {1.0f, 0.0f}}, // 右上
-		//左
-		{{-5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{-5.0f, -5.0f, 5.0f},{}, {0.0f, 0.0f}}, // 左上
-		{{-5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{-5.0f, 5.0f, 5.0f}, {},{1.0f, 0.0f}}, // 右上
-		//右
+		
+		{{0.0f, 5.0f, 0.0f},{}, {0.5f, 0.0f}}, // 上
 		{{5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{5.0f, -5.0f, 5.0f},{}, {0.0f, 0.0f}}, // 左上
-		{{5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{5.0f, 5.0f, 5.0f},{}, {1.0f, 0.0f}}, // 右上
-		//上
-		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{-5.0f, 5.0f, 5.0f},{}, {0.0f, 0.0f}}, // 左上
-		{{5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{5.0f, 5.0f, 5.0f},{}, {1.0f, 0.0f}}, // 右上
-		//下
-		{{-5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左下
-		{{-5.0f, -5.0f, 5.0f},{}, {0.0f, 0.0f}}, // 左上
-		{{5.0f, -5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
-		{{5.0f, -5.0f, 5.0f}, {},{1.0f, 0.0f}}, // 右上
+		{{0.0f, -5.0f, 5.0f},{}, {1.0f, 1.0f}}, // 右下
+		
+		{{0.0f, 5.0f, 0.0f},{}, {0.5f, 0.0f}}, // 上
+		{{0.0f, -5.0f, 5.0f},{}, {0.0f, 1.0f}}, // 左下
+		{{-5.0f, -5.0f, -5.0f},{}, {1.0f, 1.0f}}, // 右下
+		//底面
+		{{-5.0f, -5.0f, -5.0f},{}, {0.5f, 0.0f}}, // 上
+		{{5.0f, -5.0f, -5.0f},{}, {0.0f, 1.0f}}, // 左上
+		{{0.0f, -5.0f, 5.0f},{}, {1.0f, 1.0f}}, // 右下
 	};
 
 	// インデックスデータ
 	unsigned short indices[] = {
-		//前
-		0, 1, 2, // 三角形1つ目
-		2, 1, 3, // 三角形2つ目
-		//後ろ
-		6, 5, 4, // 三角形1つ目
-		7, 5, 6, // 三角形2つ目
-		//左
-		8, 9, 10, // 三角形1つ目
-		10, 9, 11, // 三角形2つ目
-		//右
-		14, 13, 12, // 三角形1つ目
-		15, 13, 14, // 三角形2つ目
-		//上
-		16, 17, 18, // 三角形1つ目
-		18, 17, 19, // 三角形2つ目
-		//下
-		22, 21, 20, // 三角形1つ目
-		23, 21, 22, // 三角形2つ目
+		0, 2, 1, // 三角形1つ目
+		3, 5, 4, // 三角形2つ目
+		6, 8, 7, // 三角形1つ目
+		9, 11, 10, // 三角形2つ目
 	};
 
 	//-----深度バッファ-----
@@ -725,7 +697,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 color = { 1.0f,0.0f,0.0f,1.0f };
+	constMapMaterial->color = color;
 
 
 #pragma region 画像イメージデータの作成
@@ -985,6 +958,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		for (int i = 0; i < _countof(object); i++) {
 			object[i]->Affinne(keys, matProjection, matView);
 		}
+		
+
+		//オブジェクトの色変更
+		if (color.x >= 1.0f) {
+			if (color.z > 0.0f) {
+				color.z -= 0.005f;
+			}else if (color.z <= 0.0f) {
+				color.y += 0.005f;
+			}
+		}
+		if (color.y >= 1.0f) {
+			if (color.x > 0.0f) {
+				color.x -= 0.005f;
+			}
+			else if (color.x <= 0.0f) {
+				color.z += 0.005f;
+			}
+		}
+		if (color.z >= 1.0f) {
+			if (color.y > 0.0f) {
+				color.y -= 0.005f;
+			}
+			else if (color.y <= 0.0f) {
+				color.x += 0.005f;
+			}
+		}
+
+		constMapMaterial->color = color;
+
 #pragma endregion DirectX毎フレーム処理
 		//DirectX毎フレーム処理　ここまで	
 
@@ -1030,7 +1032,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->SetDescriptorHeaps(1, &srvHeap);
 		// SRVヒープの先頭ハンドルを取得（SRVを指しているはず）
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
-		srvGpuHandle.ptr += incrementSize;
+		//srvGpuHandle.ptr += incrementSize;
 		// SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
 		commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 		
