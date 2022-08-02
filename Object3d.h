@@ -2,6 +2,8 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 using namespace DirectX;
+#include<wrl.h>
+using namespace Microsoft::WRL;
 
 //定数バッファ用データ構造体(3D変換行列)
 struct ConstBufferDataTransform {
@@ -21,10 +23,10 @@ public:
 
 private:
 	HRESULT result;
-	ID3D12Device* device = nullptr;
+	ComPtr<ID3D12Device> device;
 public:
 	//定数バッファ(行列用)
-	ID3D12Resource* constBuffTransform;
+	ComPtr<ID3D12Resource> constBuffTransform;
 	//定数バッファマップ(行列用)
 	ConstBufferDataTransform* constMapTransform;
 	//アフィン変換情報
