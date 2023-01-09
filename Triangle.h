@@ -1,26 +1,40 @@
 #pragma once
-#include <Windows.h>
-#include <string>
-#include "Struct.h"
-#include <DirectXMath.h>
+#include<d3d12.h>
+#include<DirectXMath.h>
+#include<wrl.h>
 using namespace DirectX;
-#include <d3d12.h>
-#pragma comment(lib, "d3d12.lib")
-#include <d3dcompiler.h>
-#pragma comment(lib, "d3dcompiler.lib")
+using namespace std;
+using namespace Microsoft::WRL;
 
-class Triangle {
+
+class Triangle
+{
 public:
-	Triangle(float x1, float y1, float x2, float y2, float x3, float y3,ID3D12Device* Device, ID3D12GraphicsCommandList *CommandList);
-
-	void draw();
-
-public:
-	ID3D12GraphicsCommandList* commandList = nullptr;
-	HRESULT result;
-	ID3D12Device* device = nullptr;
+	struct Vertex
+	{
+		XMFLOAT3 pos; //xyz座標
+		XMFLOAT2 uv;  //uv座標
+	};
+	ComPtr<ID3D12PipelineState> pipelineState = nullptr;
+	ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	ID3D12PipelineState* pipelineState = nullptr;
-	ID3D12RootSignature* rootSignature;
-
+	D3D12_INDEX_BUFFER_VIEW ibView;
+	HRESULT result;
+	Vertex vertex1;
+	Vertex vertex2;
+	Vertex vertex3;
+	//インデックスデータ
+	unsigned short indices[3] =
+	{
+		0,1,2,//三角形１
+	};
+public:
+	//コンストラクタ
+	Triangle();
+	Triangle(Vertex vertex1, Vertex vertex2, Vertex vertex3);
+	//デストラクタ
+	~Triangle();
+	//描画初期化処理
+	void Initialize(ID3D12Device* device);
+	void Draw(ID3D12GraphicsCommandList* commandList);
 };
