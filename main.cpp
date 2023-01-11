@@ -424,7 +424,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	ComPtr<ID3D12Resource> constBuffTransform0 = nullptr;
-	ConstBufferDataTransform* constMapTransform0 = nullptr;
+	//ConstBufferDataTransform* constMapTransform0 = nullptr;
 	////ヒープ設定
 	//D3D12_HEAP_PROPERTIES cbHeapProp{};
 	//cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -438,73 +438,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//cbResourceDesc.SampleDesc.Count = 1;
 	//cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	//3Dオブジェクトの数
-	const size_t kObjectConst = 50;
-	//3Dオブジェクトの配列
-	Object3D object3ds[kObjectConst];
+	////3Dオブジェクトの数
+	//const size_t kObjectConst = 50;
+	////3Dオブジェクトの配列
+	//Object3D object3ds[kObjectConst];
 
-	//配列内の全オブジェクトに対して
-	for (int i = 0; i < _countof(object3ds); i++) {
-		//初期化
-		object3ds[i].Initialize(dxCommon->GetDevice());
+	////配列内の全オブジェクトに対して
+	//for (int i = 0; i < _countof(object3ds); i++) {
+	//	//初期化
+	//	object3ds[i].Initialize(dxCommon->GetDevice());
 
-		//ここからは親子構造のサンプル
-		//先頭以外なら
-		if (i > 0) {
-			//一つ前のオブジェクトを親オブジェクトとする
-			object3ds[i].parent = &object3ds[i - 1];
-			//親オブジェクトの9割の大きさ
-			object3ds[i].scale = { 0.9f,0.9f,0.9f };
-			//親オブジェクトに対してZ軸まわりに30度回転
-			object3ds[i].rotation = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
+	//	//ここからは親子構造のサンプル
+	//	//先頭以外なら
+	//	if (i > 0) {
+	//		//一つ前のオブジェクトを親オブジェクトとする
+	//		object3ds[i].parent = &object3ds[i - 1];
+	//		//親オブジェクトの9割の大きさ
+	//		object3ds[i].scale = { 0.9f,0.9f,0.9f };
+	//		//親オブジェクトに対してZ軸まわりに30度回転
+	//		object3ds[i].rotation = { 0.0f,0.0f,XMConvertToRadians(30.0f) };
 
-			//親オブジェクトに対してZ方向-8.0ずらす
-			object3ds[i].position = { 0.0f,0.0f,-8.0f };
-		}
+	//		//親オブジェクトに対してZ方向-8.0ずらす
+	//		object3ds[i].position = { 0.0f,0.0f,-8.0f };
+	//	}
 
-		////定数バッファの生成
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp,//ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc,//リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform0));
-		//assert(SUCCEEDED(result));
-
-		////定数バッファのマッピング
-		//result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0);//マッピング
-		//assert(SUCCEEDED(result));
-	}
+	//}
 	ComPtr<ID3D12Resource> constBuffTransform1 = nullptr;
-	ConstBufferDataTransform* constMapTransform1 = nullptr;
-	{
-		//ヒープ設定
-		D3D12_HEAP_PROPERTIES cbHeapProp{};
-		cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-		//リソース設定
-		D3D12_RESOURCE_DESC cbResourceDesc{};
-		cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-		cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;//256バイトアラインメント
-		cbResourceDesc.Height = 1;
-		cbResourceDesc.DepthOrArraySize = 1;
-		cbResourceDesc.MipLevels = 1;
-		cbResourceDesc.SampleDesc.Count = 1;
-		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	//ConstBufferDataTransform* constMapTransform1 = nullptr;
+	//{
+	//	//ヒープ設定
+	//	D3D12_HEAP_PROPERTIES cbHeapProp{};
+	//	cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+	//	//リソース設定
+	//	D3D12_RESOURCE_DESC cbResourceDesc{};
+	//	cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	//	cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;//256バイトアラインメント
+	//	cbResourceDesc.Height = 1;
+	//	cbResourceDesc.DepthOrArraySize = 1;
+	//	cbResourceDesc.MipLevels = 1;
+	//	cbResourceDesc.SampleDesc.Count = 1;
+	//	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-		////定数バッファの生成
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp,//ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc,//リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform1));
-
-		////定数バッファのマッピング
-		//result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1);//マッピング
-		//assert(SUCCEEDED(result));
-	}
+	//}
 	////並行投影行列の計算
 	//constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
 	//	0.0f, window_width,
@@ -760,6 +735,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//constMapTransform1->mat = matWorld1 * matView * matProjection;;
 
 //----------------------ゲームループ-------------------------
+
+	Object3d* obj1 = nullptr;
+	Model* model1 = nullptr;
+	
+	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_heigit);
+	obj1 = Object3d::Create();
+
+	Model::SetDevice(dxCommon->GetDevice());
+	model1 = Model::LoadFromOBJ("triangle_mat");
+
+	obj1->SetModel(model1);
+	obj1->SetPosition({ -30,0,0 });
+	obj1->SetEye(eye);
+
+
+	Object3d* obj2 = nullptr;
+	Model* model2 = nullptr;
+
+	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_heigit);
+	obj2 = Object3d::Create();
+
+	Model::SetDevice(dxCommon->GetDevice());
+	model2 = Model::LoadFromOBJ("cube");
+
+	obj2->SetModel(model2);
+
+	obj2->SetPosition({ 30,0,0 });
+	obj2->SetEye(eye);
+
 	while (true) {
 #pragma region 基盤システムの更新
 		//×ボタンで終了メッセージがきたらゲームループを抜ける
@@ -772,7 +776,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion 基盤システムの更新
 
 #pragma region 最初のシーンの更新
-		//更新処理ここから
+
+
+		obj1->Update();
+		obj2->Update();
+
+		if (input->PushKey(DIK_SPACE))
+		{
+			obj1->SetModel(model2);
+			obj2->SetModel(model1);
+		}
+		else {
+			obj1->SetModel(model1);
+			obj2->SetModel(model2);
+		}
+
+
 		if (input->PushKey(DIK_Z) || input->PushKey(DIK_X))
 		{
 			if (input->PushKey(DIK_Z)) { angle += XMConvertToRadians(1.0f); }
@@ -781,55 +800,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//angleラジアンだけY軸まわりに回転。半径は-100
 			eye.x = -100 * sinf(angle);
 			eye.z = -100 * cosf(angle);
+
+			obj1->SetEye(eye);
+			obj2->SetEye(eye);
+
 			matView = XMMatrixIdentity();
 			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
 
-		//いずれかのキーを押していたら
-		if (input->PushKey(DIK_UP)) { object3ds[0].position.y += 1.0f; }
-		else if (input->PushKey(DIK_DOWN)) { object3ds[0].position.y -= 1.0f; }
-		if (input->PushKey(DIK_RIGHT)) { object3ds[0].position.x += 1.0f; }
-		else if (input->PushKey(DIK_LEFT)) { object3ds[0].position.x -= 1.0f; }
-
-		if (input->PushKey(DIK_Q)) { object3ds[0].rotation.z += 0.1f; }
-		else if (input->PushKey(DIK_E)) { object3ds[0].rotation.z -= 0.1f; }
-
-
-		////ワールド変換行列
-		//matWorld = XMMatrixIdentity();
-
-		//matTrans = XMMatrixIdentity();//平行移動行列
-		//matTrans *= XMMatrixTranslation(position.x, position.y, position.z);//(-50,0,0)平行移動
-
-		//matWorld *= matScale;//ワールド座標にスケーリングを反映
-		//matWorld *= matRot;//ワールド行列に回転を反映
-		//matWorld *= matTrans;//ワールド行列に平行移動を反映
-
-		////ワールド変換行列
-		//matWorld1 = XMMatrixIdentity();
-
-		//matTrans1 = XMMatrixIdentity();//平行移動行列
-		//matTrans1 *= XMMatrixTranslation(position1.x, position1.y, position1.z);//(-50,0,0)平行移動
-
-		//matWorld1 *= matScale1;//ワールド座標にスケーリングを反映
-		//matWorld1 *= matRot1;//ワールド行列に回転を反映
-		//matWorld1 *= matTrans1;//ワールド行列に平行移動を反映
-
-		////行列の計算
-		//constMapTransform0->mat = matWorld * matView * matProjection;
-		////行列の計算
-		//constMapTransform1->mat = matWorld1 * matView * matProjection;;
-		for (size_t i = 0; i < _countof(object3ds); i++)
-		{
-			object3ds[i].Update(matView, matProjection);
-		}
-
-
 #pragma endregion 最初のシーンの更新
 		//描画前処理
 		dxCommon->PreDraw();
+		Object3d::PreDraw(dxCommon->GetCommandList());
 
 #pragma region 最初のシーンの描画
+		obj1->Draw();
+		obj2->Draw();
+
 		//パイプラインステートとルートシグネチャの設定コマンド
 		dxCommon->GetCommandList()->SetPipelineState(pipelineState.Get());
 		dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -859,16 +846,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		////描画コマンド
 		//dxCommon->GetCommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);//すべての頂点を使って描画
 
-		//全オブジェクトについての処理
-		for (int i = 0; i < _countof(object3ds); i++)
-		{
-			object3ds[i].Draw(dxCommon->GetCommandList(), vbView, ibView, _countof(indices));
-		}
+
+
 
 #pragma endregion 最初のシーンの描画
 
 		//描画後処理
 		dxCommon->PostDrow();
+		Object3d::PostDraw();
 	}
 
 #pragma region 最初のシーンの終了
